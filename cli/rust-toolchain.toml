@@ -1,0 +1,5 @@
+# This toolchain is used to build cli utilities, not the esp32 target
+
+[toolchain]
+profile = "minimal"
+channel = "1.70"
