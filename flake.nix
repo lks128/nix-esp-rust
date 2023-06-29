@@ -139,14 +139,10 @@
         devShells.${system}.default = pkgs.mkShell {
             nativeBuildInputs = [
                 esp-toolchain
-
                 cargo-generate
                 ldproxy
                 espflash
                 cargo-espflash
-
-                pkgs.zlib
-                pkgs.libxml2
             ];
 
             shellHook = ''
