@@ -118,7 +118,15 @@
             # Skip src requirement
             unpackPhase = "true";
 
-            buildInputs = [esp-toolchain-bin esp-toolchain-src xtensa-esp32-elf-clang riscv32-esp-elf xtensa-esp32s2-elf];
+            buildInputs = [
+                esp-toolchain-bin
+                esp-toolchain-src
+
+                # make it work on NixOS
+                pkgs.autoPatchelfHook
+                pkgs.stdenv.cc.cc.lib
+                pkgs.zlib
+            ];
 
             installPhase = ''
                 mkdir -p $out/
