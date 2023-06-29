@@ -95,21 +95,64 @@
             sha256 = "sha256:023j8w5g1s6f4zbk0q7mn8vwkz735qvgdalxw4yrnrqxjyw5barj";
         };
 
-        xtensa-esp32-elf-clang = fetchTarball {
-            url = "https://github.com/espressif/llvm-project/releases/download/esp-16.0.0-20230516/libs_llvm-esp-16.0.0-20230516-linux-amd64.tar.xz";
-            sha256 = "sha256:15zkdvn495afkk690rsxwnmjqjbpw1cjz0rbvnqqyz3r0r2h3lsg";
+        xtensa-esp32-elf-clang = pkgs.stdenv.mkDerivation {
+            name = "xtensa-esp32-elf-clang";
+
+            src = fetchTarball {
+                url = "https://github.com/espressif/llvm-project/releases/download/esp-16.0.0-20230516/libs_llvm-esp-16.0.0-20230516-linux-amd64.tar.xz";
+                sha256 = "sha256:15zkdvn495afkk690rsxwnmjqjbpw1cjz0rbvnqqyz3r0r2h3lsg";
+            };
+
+            buildInputs = [
+                # make it work on NixOS
+                pkgs.autoPatchelfHook
+                pkgs.stdenv.cc.cc.lib
+                pkgs.zlib
+                pkgs.libxml2
+            ];
+
+            installPhase = ''
+                cp -R $src $out
+            '';
         };
 
-        riscv32-esp-elf = fetchTarball {
-            url = "https://github.com/espressif/crosstool-NG/releases/download/esp-12.2.0_20230208/riscv32-esp-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz";
-            sha256 = "sha256:0sj6aqfxfhqrxw7zrqd866a07g91javsqbp2i6pmw3f3ybbidg6l";
+        riscv32-esp-elf = pkgs.stdenv.mkDerivation {
+            name = "riscv32-esp-elf";
+
+            src = fetchTarball {
+                url = "https://github.com/espressif/crosstool-NG/releases/download/esp-12.2.0_20230208/riscv32-esp-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz";
+                sha256 = "sha256:0sj6aqfxfhqrxw7zrqd866a07g91javsqbp2i6pmw3f3ybbidg6l";
+            };
+
+            buildInputs = [
+                # make it work on NixOS
+                pkgs.autoPatchelfHook
+                pkgs.stdenv.cc.cc.lib
+            ];
+
+            installPhase = ''
+                cp -R $src $out
+            '';
         };
 
-        xtensa-esp32s2-elf = fetchTarball {
-            url = "https://github.com/espressif/crosstool-NG/releases/download/esp-12.2.0_20230208/xtensa-esp32s2-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz";
-            sha256 = "sha256:0klljvqpg1p5q7dcv8sjgpqr40ccbp1gd1xpjyykf0z3k7p1bnsx";
-        };
+        xtensa-esp32s2-elf = pkgs.stdenv.mkDerivation {
+            name = "xtensa-esp32s2-elf";
 
+            src = fetchTarball {
+                url = "https://github.com/espressif/crosstool-NG/releases/download/esp-12.2.0_20230208/xtensa-esp32s2-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz";
+                sha256 = "sha256:0klljvqpg1p5q7dcv8sjgpqr40ccbp1gd1xpjyykf0z3k7p1bnsx";
+            };
+
+            buildInputs = [
+                # make it work on NixOS
+                pkgs.autoPatchelfHook
+                pkgs.stdenv.cc.cc.lib
+            ];
+
+            installPhase = ''
+                cp -R $src $out
+            '';
+        };
  
         # esp rustc version has additional targets in `rustc --print target-list`
         esp-toolchain = pkgs.stdenv.mkDerivation {
@@ -159,8 +202,6 @@
                 export PATH="${riscv32-esp-elf}/bin:$PATH"
                 export PATH="${esp-toolchain}/bin:$PATH"
             '';
-
-            LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib:${pkgs.libxml2.out}/lib";
         };
     };
 
